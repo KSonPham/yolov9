@@ -1,0 +1,6 @@
+runs/*
+*.pyc
+wandb/*
+coco/*
+*.sh
+*.pt
