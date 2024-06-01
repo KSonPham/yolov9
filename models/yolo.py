@@ -641,10 +641,13 @@ class DetectionModel(BaseModel):
             xi = scale_img(x.flip(fi) if fi else x, si, gs=int(self.stride.max()))
             yi = self._forward_once(xi)[0]  # forward
             # cv2.imwrite(f'img_{si}.jpg', 255 * xi[0].cpu().numpy().transpose((1, 2, 0))[:, :, ::-1])  # save
+            yi = yi.transpose(1,2)
             yi = self._descale_pred(yi, fi, si, img_size)
             y.append(yi)
         y = self._clip_augmented(y)  # clip augmented tails
-        return torch.cat(y, 1), None  # augmented inference, train
+        y = torch.cat(y, 1)  # augmented inference
+        y = y.transpose(1, 2)
+        return y, None  # augmented inference, train
 
     def _descale_pred(self, p, flips, scale, img_size):
         # de-scale predictions following augmented inference (inverse operation)
